@@ -1,0 +1,162 @@
+<html>
+
+<head>
+    <title>Processing Template</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.4.13/p5.js"></script>
+    <script>
+        var ballX = 200; //X value of the bowling ball
+        var ballY = 570; //Y value of the bowling ball
+        var ballSpeedY = 0; //the intial speed of the ball when mouse is pressed
+        var userNum = 200; //sets userNum to a value that will be used later on to move the bowling ball
+        var pins = []; //array that stores all of the bowling pins
+        var scoreNum = 0; //amount of points scored
+        var livesNum = 3; //amount of lives the user begins with
+
+        function setup() {
+            createCanvas(400, 570); //size of the canvas
+            createPins(); //creates the pins
+        }
+
+        function draw() {
+            background(255, 223, 102); //color of the background
+            startLine(); //red line
+            courtLayout(); //gutters in the bowling arena 
+            score(); //updates score 
+            lives(); //updates lives
+            pinsCollision(); //in charge of checking if ball has hit pin and erases it 
+            bowlingBall(); //draws the bowling ball
+            ballMove(); //allows user to move the ball only when it's below the line
+            ballReturn(); //the ball returns to original position
+            endGame(); //ends the game when the users lives reachs zero
+            subtractLives(); //takes away one of the users lives when the bowling ball reaches the end of the canvas
+        }
+
+        function subtractLives() {
+            if (ballY == 5) { //checks if the ball reaches the end of the canvas
+                livesNum--; //takes away one of the users lives
+            }
+        }
+
+        function endGame() {
+            if (livesNum == 0) { //checks when lives reaches zero
+                fill(255, 0, 0); //the color of the text (RED)
+                textSize(25); //the size of the text
+                textAlign(CENTER); //aligns the text to center
+                text("GAME OVER!", 200, 300); //prints GAME OVER! on the screen
+                noLoop(); //stops the entire code
+            }
+
+
+
+
+        }
+
+        function ballReturn() {
+            if (ballY <= 0) { //checks if the bowling ball reaches to the end of the canvas 
+                ballY = 570; //set ball to original position
+                ballSpeedY = 0; //ball is not moving up
+
+            }
+        }
+
+        function pinsCollision() {
+            //insures loop only runs for the pins we push into array
+            for (var i = 0; i < pins.length; i++) {
+                pins[i].display(); //make every pin to show
+
+                //if any part of the ball touches the pins, the pins at the specfic index will get removed from the array
+                if (ballX < pins[i].x + 25 && ballX > pins[i].x - 25 && ballY < pins[i].y + 25 && ballY > pins[i].y - 25) {
+                    pins.splice(i, 1); //remove the pin touches the ball from the array
+                    scoreNum++; //increase score by one
+
+
+
+                }
+            }
+        }
+
+        function score() {
+            fill(255, 0, 0); //color of the text (RED)
+            textSize(20); //font size
+            text("Score: " + scoreNum, 50, 450); //prints out score
+        }
+
+        function lives() {
+            fill(255, 0, 0); //color of the text (RED)
+            textSize(20); //font size
+            text("Lives: " + livesNum, 50, 475); //displays the amount of lives using the varibale Lives
+
+
+        }
+
+        function courtLayout() {
+            noStroke(); //no border
+            fill(150); //color of the gutter (GRAY)
+            rect(0, 0, 50, height); //creates the left gutter
+            rect(width - 50, 0, 50, height); //creates the right gutter
+        }
+
+        function Pin(x, y) { //class that creates the Pin 
+            this.x = x; //sets the x value of this fuction to a variable x
+            this.y = y; //sets the y value of this function to a variable y
+            this.display = function() { //how each pin looks
+                fill(255); //color (WHITE)
+                ellipse(this.x, this.y, 25, 25); //shape & location of the 
+            }
+        }
+
+        function createPins() {
+            for (var x = 125; x < 325; x += 50) { //fourth row with the 4 pins
+                pins.push(new Pin(x, 25)); //pushes the pins with different x parameters into the pins array
+
+            }
+            for (var x = 150; x < 300; x += 50) { //third row with the 3 pins
+                pins.push(new Pin(x, 50)); //pushes the pins with different x parameters into the pins array
+            }
+            for (var x = 175; x < 275; x += 50) { //second row with the 2 pins
+                pins.push(new Pin(x, 75)); //pushes the pins with different x parameters into the pins array
+            }
+            for (var x = 200; x < 250; x += 50) { //first row with the only pin
+                pins.push(new Pin(x, 100)); //pushes the pins with different x parameters into the pins array
+            }
+        }
+
+        function startLine() {
+            stroke(255, 0, 0); //color of the line (RED)
+            strokeWeight(2.5); //thickness of the line
+            line(50, 500, 350, 500); //the location of the line
+        }
+
+        function bowlingBall() {
+            ballX = userNum;
+            ballX = constrain(userNum, 0, width); //keeps the ball within the canvas
+            fill(255, 0, 0); //color of the ball (RED)
+            ellipse(ballX, ballY - 25, 51, 51); //shape of the ball
+            fill(0); // color of the three holes on the bowling ball
+            ellipse(ballX - 6, ballY - 30, 5, 5); //left hole
+            ellipse(ballX + 6, ballY - 30, 5, 5); //right hole
+            ellipse(ballX, ballY - 15, 5, 5); //bottom hole
+
+        }
+
+        function ballMove() {
+            if (ballY > 560) { //if ball is below the line
+                userNum = mouseX; //allow user to move the ball with mouse
+
+            }
+            if (ballY > 0) { //if the ball is below canvas height
+                ballY -= ballSpeedY; //move the ball by the set speed
+            }
+        }
+
+        function mousePressed() {
+            ballSpeedY = 5; //when mouse is clicked make speed five 
+        }
+    </script>
+</head>
+
+<body>
+
+</body>
+
+</html>
